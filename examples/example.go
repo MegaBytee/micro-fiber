@@ -11,7 +11,7 @@ func main() {
 	config := microfiber.Config{
 		AuthKeyLookup: "header:apiKey",
 		Port:          "3690",
-		Cache:         true,
+		Cache:         false,
 		Limitter:      true,
 		Logger:        true,
 		Metrics:       true,
@@ -24,10 +24,11 @@ func main() {
 
 	protected := routes.NewRoute(routes.GET, "/protected", func(c *fiber.Ctx) error {
 		return c.JSON(routes.NewResponseHTTP(true, "protected", "hello from protected"))
-	})
+	}).SetProtected(true)
 
+	//log.Println("protected:", protected.Protected)
 	routes := []*routes.ApiRoute{hello, protected}
-	config.SetProtectedUrls([]string{"/protected"})
+
 	service.RegisterRoutes(routes)
 	service.Setup()
 	service.Start()
